@@ -7,9 +7,8 @@
         <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
             <el-divider content-position="center">{{ dta }}</el-divider>
-            <div v-for="(code,codeIndex) in codes" class="flex flex-wrap">
-                <el-button style="border-width: 0;">{{ code }}</el-button>
-                <el-divider direction="vertical" v-if="codeIndex !== codes.length - 1" />
+            <div v-for="code in codes" style="display: inline;">
+                <el-button text @click="btnClick">{{ code }}</el-button>
             </div>
             <div v-for="(v,i) in reqDataSource">
               <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
@@ -143,6 +142,10 @@ const tabClick = (pane :TabsPaneContext, ev:Event)=>{
   let dtaName = (pane.props.label).split(":")[0].trim()
   dta.value = dtaName
   getCodes(dtaName)
+}
+
+const btnClick = (event)=>{
+  console.log(event.target.tagName)
 }
 
 onMounted(async () => {

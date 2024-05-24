@@ -6,10 +6,11 @@
       <el-main>
         <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
-            <el-divider content-position="center">{{ dta }}</el-divider>
+            <el-divider content-position="center">{{ dtaPort }}</el-divider>
             <div v-for="c in codes" style="display: inline;">
                 <el-button text @click="btnClick">{{ c }}</el-button>
             </div>
+            <el-divider content-position="center">{{ code }}</el-divider>
             <div v-for="(v,i) in reqDataSource">
               <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
               <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
@@ -42,7 +43,6 @@ import axios from 'axios';
 const codes = ref([]);
 const dta = ref('');
 const code = ref('');
-const service = ref('')
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
 const dtaPorts = ref([]);
@@ -58,10 +58,10 @@ const getCodes = (dta) => {
 }
 
 const tabClick = (pane :TabsPaneContext, ev:Event)=>{
-  dtaPort.value = pane.props.label
   let dtaName = pane.props.label.split(":")[0].trim()
-  dta.value = dtaName
   getCodes(dtaName)
+  dta.value = dtaName
+  dtaPort.value = pane.props.label
 }
 
 const btnClick = (event)=>{
@@ -69,7 +69,6 @@ const btnClick = (event)=>{
   reqDataSource.value = []
   resDataSource.value = []
   axios.get('http://28.4.199.2:8000/svc/'+dta.value+'/'+code.value).then((response) => {
-    service.value = response.data;
     reqDataSource.value = response.data.RequestItems
     resDataSource.value = response.data.ResponseItems
   })

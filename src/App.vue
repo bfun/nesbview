@@ -4,10 +4,10 @@
       <el-header>
       </el-header>
       <el-main>
-        <el-tabs tab-position="left" @tab-click="tabClick" @tab-change="tabChange">
+        <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
             <div v-for="(code,codeIndex) in codes">
-                <span>{{ code }}</span>
+                <el-button>{{ code }}</el-button>
                 <el-divider direction="vertical" v-if="codeIndex !== codes.length - 1" />
             </div>
             <div v-for="(v,i) in reqDataSource">

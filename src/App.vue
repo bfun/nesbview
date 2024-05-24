@@ -38,13 +38,13 @@ import { ref,onMounted } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
 import axios from 'axios';
 
-const codes = ref([]);
+const dtaPorts = ref([]);
+const dtaPort = ref('');
 const dta = ref('');
+const codes = ref([]);
 const code = ref('');
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
-const dtaPorts = ref([]);
-const dtaPort = ref('');
 
 const getCodes = (dta) => {
   axios.get('http://28.4.199.2:8000/svcs/'+dta).then((response) => {
@@ -56,6 +56,12 @@ const getCodes = (dta) => {
 }
 
 const tabClick = (pane :TabsPaneContext, ev:Event)=>{
+  dtaPort.value = ''
+  dta.value = ''
+  codes.value = []
+  code.value = ''
+  reqDataSource.value = []
+  resDataSource.value = []
   let dtaName = pane.props.label.split(":")[0].trim()
   getCodes(dtaName)
   dta.value = dtaName

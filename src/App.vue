@@ -5,11 +5,9 @@
       </el-header>
       <el-main>
         <el-tabs tab-position="left" @tab-click="tabClick">
-          <el-tab-pane v-for="item in dtaPorts" :label="item">
+          <el-tab-pane v-for="item in dtaPorts" :key="item" :label="item">
             <el-divider content-position="center" v-if="dtaPort.length > 0">{{ dtaPort }}</el-divider>
-            <div v-for="c in codes" style="display: inline;">
-                <el-button text @click="btnClick">{{ c }}</el-button>
-            </div>
+            <el-button v-for="c in codes" :key="c" text @click="btnClick">{{ c }}</el-button>
             <el-divider content-position="center" v-if="code.length > 0">{{ code }}</el-divider>
             <div v-for="(v,i) in reqDataSource">
               <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>

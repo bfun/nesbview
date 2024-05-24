@@ -2,7 +2,7 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-tabs :tab-position="left">
+        <el-tabs tab-position="left">
           <el-tab-pane v-for="item in dtaPorts" :label="item">{{ item }}</el-tab-pane>
         </el-tabs>
         <el-row class="row-bg" justify="center">

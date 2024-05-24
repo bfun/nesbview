@@ -139,14 +139,10 @@ const codeChange = (val) => {
       });
 }
 const tabClick = (pane :TabsPaneContext, ev:Event)=>{
-  console.log("tabClick", pane.paneName,ev.type)
-  let parts = (pane.paneName as string).split(":")
-  getCodes(parts[0].trim())
+  let dtaName = (pane.props.label).split(":")[0].trim()
+  getCodes(dtaName)
 }
 
-const tabChange = (name)=>{
-  console.log("tabChange", name)
-}
 onMounted(async () => {
   await axios.get('http://28.4.199.2:8000/svrs').then((response) => {
     response.data.forEach((item) => {

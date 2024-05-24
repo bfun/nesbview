@@ -6,11 +6,11 @@
       <el-main>
         <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
-            <el-divider content-position="center">{{ dtaPort }}</el-divider>
+            <el-divider content-position="center" v-if="dtaPort.length > 0">{{ dtaPort }}</el-divider>
             <div v-for="c in codes" style="display: inline;">
                 <el-button text @click="btnClick">{{ c }}</el-button>
             </div>
-            <el-divider content-position="center">{{ code }}</el-divider>
+            <el-divider content-position="center" v-if="code.length > 0">{{ code }}</el-divider>
             <div v-for="(v,i) in reqDataSource">
               <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
               <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
@@ -78,6 +78,8 @@ const btnClick = (event)=>{
 }
 
 onMounted(async () => {
+  dtaPorts.value = []
+  dtaPorts.value.push("DTA : 端口")
   await axios.get('http://28.4.199.2:8000/svrs').then((response) => {
     response.data.forEach((item) => {
       if(item.Name.includes("_SPUT")){

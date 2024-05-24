@@ -41,14 +41,14 @@ import axios from 'axios';
 const dtaPorts = ref([]);
 const dtaPort = ref('');
 const dta = ref('');
-let codes = [];
+const codes = ref([]);
 const code = ref('');
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
 
 const getCodes = (dta) => {
   axios.get('http://28.4.199.2:8000/svcs/'+dta).then((response) => {
-    codes = response.data;
+    codes.value = response.data;
   })
       .catch(error => {
         console.error('Error fetching data: ', error);
@@ -58,7 +58,7 @@ const getCodes = (dta) => {
 const tabClick = (pane :TabsPaneContext, ev:Event)=>{
   dtaPort.value = ''
   dta.value = ''
-  codes = []
+  codes.value = []
   code.value = ''
   reqDataSource.value = []
   resDataSource.value = []

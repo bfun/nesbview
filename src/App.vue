@@ -1,13 +1,14 @@
 <template>
-  <div class="common-layout">
+  <div class="common-layout" style="width: 1200px;">
     <el-container>
       <el-header>
       </el-header>
       <el-main>
         <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
-            <div v-for="(code,codeIndex) in codes">
-                <el-button>{{ code }}</el-button>
+            <el-divider content-position="center">{{ dta }}</el-divider>
+            <div v-for="(code,codeIndex) in codes" class="flex flex-wrap">
+                <el-button style="border-width: 0;">{{ code }}</el-button>
                 <el-divider direction="vertical" v-if="codeIndex !== codes.length - 1" />
             </div>
             <div v-for="(v,i) in reqDataSource">
@@ -140,6 +141,7 @@ const codeChange = (val) => {
 }
 const tabClick = (pane :TabsPaneContext, ev:Event)=>{
   let dtaName = (pane.props.label).split(":")[0].trim()
+  dta.value = dtaName
   getCodes(dtaName)
 }
 

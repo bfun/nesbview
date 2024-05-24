@@ -2,7 +2,7 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-tabs tab-position="left">
+        <el-tabs tab-position="left" @tab-click="tabClick" @tab-change="tabChange">
           <el-tab-pane v-for="item in dtaPorts" :label="item">{{ item }}</el-tab-pane>
         </el-tabs>
         <el-row class="row-bg" justify="center">
@@ -48,6 +48,7 @@
 
 <script setup>
 import { ref,onMounted } from 'vue';
+import { TabsPaneContext } from 'element-plus'
 import axios from 'axios';
 
 const initSvrs = [];
@@ -148,9 +149,19 @@ const codeChange = (val) => {
         console.error('Error fetching data: ', error);
       });
 }
+const tabClick = (pane, ev)=>{
+  console.log("tabClick", pane,ev)
+}
+
+const tabChange = (name)=>{
+  console.log("tabChange", name)
+}
 onMounted(async () => {
   await axios.get('http://28.4.199.2:8000/svrs').then((response) => {
     response.data.forEach((item) => {
+      if(item.Name.includes("_SPUT")){
+        return
+      }
       initSvrs.push(item);
       if(item.Port!=='') {
         initPorts.push(item.Port);

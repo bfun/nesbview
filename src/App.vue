@@ -168,4 +168,15 @@ onMounted(async () => {
 });
 </script>
 <style>
+/* 默认样式 */
+.common-layout {
+  width: 100%; /* 组件宽度默认为100% */
+}
+
+/* 当屏幕宽度小于768px时应用的样式 */
+@media (max-width: 768px) {
+  .common-layout {
+    width: 90%; /* 在小屏幕上减少宽度 */
+  }
+}
 </style>

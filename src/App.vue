@@ -2,8 +2,8 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-tabs :tab-position="left" style="height: 200px" class="demo-tabs">
-          <el-tab-pane v-for="item in ports" :label="item">{{ item }}</el-tab-pane>
+        <el-tabs :tab-position="left">
+          <el-tab-pane v-for="item in dtaPorts" :label="item">{{ item }}</el-tab-pane>
         </el-tabs>
         <el-row class="row-bg" justify="center">
           <el-col :span="6"><div class="grid-content">
@@ -63,6 +63,7 @@ const code = ref('');
 const service = ref('')
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
+const dtaPorts = ref([]);
 
 const portSearch = (val) => {
   port.value = val;
@@ -154,9 +155,13 @@ onMounted(async () => {
       if(item.Port!=='') {
         initPorts.push(item.Port);
         ports.value.push(item.Port);
+        dtaPorts.value.push(item.Name + " : " + item.Port)
+      }else{
+        dtaPorts.value.push(item.Name)
       }
       initDtas.push(item.Name);
       dtas.value.push(item.Name);
+
     });
   })
   .catch(error => {

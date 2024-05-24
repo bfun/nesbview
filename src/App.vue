@@ -2,53 +2,41 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-tabs tab-position="left" @tab-click="tabClick" @tab-change="tabChange">
-          <el-tab-pane v-for="item in dtaPorts" :label="item">{{ item }}</el-tab-pane>
-        </el-tabs>
-        <el-row class="row-bg" justify="center">
-          <el-col :span="6"><div class="grid-content">
-            <el-select v-model="port" filterable clearable @change="portChange" placeholder="端口" style="width: 240px">
-              <el-option v-for="item in ports" :key="item" :label="item" :value="item"/>
-            </el-select></div>
-          </el-col>
-          <el-col :span="6"><div class="grid-content">
-            <el-select v-model="dta" filterable clearable @change="dtaChange" placeholder="DTA" style="width: 240px">
-              <el-option v-for="item in dtas" :key="item" :label="item" :value="item"/>
-            </el-select></div>
-          </el-col>
-          <el-col :span="6"><div class="grid-content">
-            <el-select v-model="code" filterable clearable @change="codeChange" placeholder="交易码" style="width: 240px">
-              <el-option v-for="item in codes" :key="item" :label="item" :value="item"/>
-            </el-select></div>
-          </el-col>
-        </el-row>
       </el-header>
       <el-main>
-        <div v-for="(v,i) in reqDataSource">
-          <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
-          <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
-            <el-table-column prop="SvrTag" label="消费方标签" width="180" />
-            <el-table-column prop="Elem" label="数据元素" width="180" />
-            <el-table-column prop="CltTag" label="服务方标签" width="180" />
-          </el-table>
-        </div>
-        <div v-for="(v,i) in resDataSource">
-          <el-divider content-position="left">响应 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
-          <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
-            <el-table-column prop="SvrTag" label="消费方标签" width="180" />
-            <el-table-column prop="Elem" label="数据元素" width="180" />
-            <el-table-column prop="CltTag" label="服务方标签" width="180" />
-          </el-table>
-        </div>
+        <el-tabs tab-position="left" @tab-click="tabClick" @tab-change="tabChange">
+          <el-tab-pane v-for="item in dtaPorts" :label="item">
+            <div v-for="(code,codeIndex) in codes">
+                <span>{{ code }}</span>
+                <el-divider direction="vertical" v-if="codeIndex !== codes.length - 1" />
+            </div>
+            <div v-for="(v,i) in reqDataSource">
+              <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
+              <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
+                <el-table-column prop="SvrTag" label="消费方标签" width="180" />
+                <el-table-column prop="Elem" label="数据元素" width="180" />
+                <el-table-column prop="CltTag" label="服务方标签" width="180" />
+              </el-table>
+            </div>
+            <div v-for="(v,i) in resDataSource">
+              <el-divider content-position="left">响应 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
+              <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
+                <el-table-column prop="SvrTag" label="消费方标签" width="180" />
+                <el-table-column prop="Elem" label="数据元素" width="180" />
+                <el-table-column prop="CltTag" label="服务方标签" width="180" />
+              </el-table>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </el-main>
       <el-footer><!-- Footer --></el-footer>
     </el-container>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref,onMounted } from 'vue';
-import { TabsPaneContext } from 'element-plus'
+import type { TabsPaneContext } from 'element-plus';
 import axios from 'axios';
 
 const initSvrs = [];
@@ -65,6 +53,7 @@ const service = ref('')
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
 const dtaPorts = ref([]);
+const tabContent = ref('')
 
 const portSearch = (val) => {
   port.value = val;
@@ -149,8 +138,10 @@ const codeChange = (val) => {
         console.error('Error fetching data: ', error);
       });
 }
-const tabClick = (pane, ev)=>{
-  console.log("tabClick", pane,ev)
+const tabClick = (pane :TabsPaneContext, ev:Event)=>{
+  console.log("tabClick", pane.paneName,ev.type)
+  let parts = (pane.paneName as string).split(":")
+  getCodes(parts[0].trim())
 }
 
 const tabChange = (name)=>{

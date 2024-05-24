@@ -2,19 +2,22 @@
   <div class="common-layout">
     <el-container>
       <el-header>
+        <el-tabs :tab-position="left" style="height: 200px" class="demo-tabs">
+          <el-tab-pane v-for="item in ports" :label="item">{{ item }}</el-tab-pane>
+        </el-tabs>
         <el-row class="row-bg" justify="center">
           <el-col :span="6"><div class="grid-content">
-            <el-select v-model="port" filterable clearable placeholder="端口" style="width: 240px">
+            <el-select v-model="port" filterable clearable @change="portChange" placeholder="端口" style="width: 240px">
               <el-option v-for="item in ports" :key="item" :label="item" :value="item"/>
             </el-select></div>
           </el-col>
           <el-col :span="6"><div class="grid-content">
-            <el-select v-model="dta" filterable clearable placeholder="DTA" style="width: 240px">
+            <el-select v-model="dta" filterable clearable @change="dtaChange" placeholder="DTA" style="width: 240px">
               <el-option v-for="item in dtas" :key="item" :label="item" :value="item"/>
             </el-select></div>
           </el-col>
           <el-col :span="6"><div class="grid-content">
-            <el-select v-model="code" filterable clearable placeholder="交易码" style="width: 240px">
+            <el-select v-model="code" filterable clearable @change="codeChange" placeholder="交易码" style="width: 240px">
               <el-option v-for="item in codes" :key="item" :label="item" :value="item"/>
             </el-select></div>
           </el-col>

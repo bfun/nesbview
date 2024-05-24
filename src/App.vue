@@ -7,8 +7,8 @@
         <el-tabs tab-position="left" @tab-click="tabClick">
           <el-tab-pane v-for="item in dtaPorts" :label="item">
             <el-divider content-position="center">{{ dta }}</el-divider>
-            <div v-for="code in codes" style="display: inline;">
-                <el-button text @click="btnClick">{{ code }}</el-button>
+            <div v-for="c in codes" style="display: inline;">
+                <el-button text @click="btnClick">{{ c }}</el-button>
             </div>
             <div v-for="(v,i) in reqDataSource">
               <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
@@ -39,97 +39,36 @@ import { ref,onMounted } from 'vue';
 import type { TabsPaneContext } from 'element-plus';
 import axios from 'axios';
 
-const initSvrs = [];
-const initPorts = [];
-const initDtas = [];
-let initCodes = [];
-const ports = ref([]);
-const dtas = ref([]);
 const codes = ref([]);
-const port = ref('');
 const dta = ref('');
 const code = ref('');
 const service = ref('')
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
 const dtaPorts = ref([]);
-const tabContent = ref('')
+const dtaPort = ref('');
 
-const portSearch = (val) => {
-  port.value = val;
-  if (val.trim() !== '') {
-    ports.value = initPorts.filter(v => v.includes(val));
-  }else{
-    ports.value = initPorts;
-  }
-};
-const portChange = (val) => {
-  reqDataSource.value = []
-  resDataSource.value = []
-  if (val.trim() === '') {
-    return;
-  }
-  for(const i of initSvrs){
-    if (i.Port === val) {
-      dta.value = i.Name;
-      getCodes(i.Name)
-      return
-    }
-  }
-};
-const dtaSearch = (val) => {
-  dta.value = val;
-  if (val.trim() !== '') {
-    dtas.value = initDtas.filter(v => v.includes(val.toUpperCase()));
-  }else{
-    dtas.value = initDtas;
-  }
-};
-const dtaChange = (val) => {
-  reqDataSource.value = []
-  resDataSource.value = []
-  if (val.trim() === '') {
-    return;
-  }
-  for(const i of initSvrs) {
-    if (i.Name === val.toUpperCase()) {
-      port.value = i.Port;
-      getCodes(i.Name)
-      return
-    }
-  }
-};
 const getCodes = (dta) => {
   axios.get('http://28.4.199.2:8000/svcs/'+dta).then((response) => {
-    initCodes = response.data
     codes.value = response.data;
   })
       .catch(error => {
         console.error('Error fetching data: ', error);
       });
 }
-const codeSearch = (val) => {
-  if (dta.value.length === 0) {
-    alert('请输入端口或DTA')
-    return
-  }
-  if (val.trim() !== '') {
-    codes.value = initCodes.filter(v => v.includes(val));
-  }else{
-    codes.value = initCodes;
-  }
-};
-const codeChange = (val) => {
+
+const tabClick = (pane :TabsPaneContext, ev:Event)=>{
+  dtaPort.value = pane.props.label
+  let dtaName = pane.props.label.split(":")[0].trim()
+  dta.value = dtaName
+  getCodes(dtaName)
+}
+
+const btnClick = (event)=>{
+  code.value = event.target.textContent
   reqDataSource.value = []
   resDataSource.value = []
-  if (val.trim()===''){
-    return
-  }
-  if (dta.value.length === 0) {
-    alert('请输入端口或DTA')
-    return
-  }
-  axios.get('http://28.4.199.2:8000/svc/'+dta.value+'/'+val).then((response) => {
+  axios.get('http://28.4.199.2:8000/svc/'+dta.value+'/'+code.value).then((response) => {
     service.value = response.data;
     reqDataSource.value = response.data.RequestItems
     resDataSource.value = response.data.ResponseItems
@@ -138,15 +77,6 @@ const codeChange = (val) => {
         console.error('Error fetching data: ', error);
       });
 }
-const tabClick = (pane :TabsPaneContext, ev:Event)=>{
-  let dtaName = (pane.props.label).split(":")[0].trim()
-  dta.value = dtaName
-  getCodes(dtaName)
-}
-
-const btnClick = (event)=>{
-  console.log(event.target.tagName)
-}
 
 onMounted(async () => {
   await axios.get('http://28.4.199.2:8000/svrs').then((response) => {
@@ -154,17 +84,11 @@ onMounted(async () => {
       if(item.Name.includes("_SPUT")){
         return
       }
-      initSvrs.push(item);
       if(item.Port!=='') {
-        initPorts.push(item.Port);
-        ports.value.push(item.Port);
         dtaPorts.value.push(item.Name + " : " + item.Port)
       }else{
         dtaPorts.value.push(item.Name)
       }
-      initDtas.push(item.Name);
-      dtas.value.push(item.Name);
-
     });
   })
   .catch(error => {

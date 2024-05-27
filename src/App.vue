@@ -1,41 +1,32 @@
 <template>
-  <div class="common-layout" style="width: 1200px;">
-    <el-container>
-      <el-header>
-      </el-header>
-      <el-main>
-        <el-tabs tab-position="left" @tab-click="tabClick">
-          <el-tab-pane v-for="item in dtaPorts" :key="item" :label="item">
-            <el-divider content-position="center" v-if="dtaPort.length > 0">{{ dtaPort }}</el-divider>
-            <el-button v-for="c in codes" :key="c" text @click="btnClick">{{ c }}</el-button>
-            <el-divider content-position="center" v-if="code.length > 0">{{ code }}</el-divider>
-            <div v-for="(v,i) in reqDataSource">
-              <el-divider content-position="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
-              <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
-                <el-table-column prop="SvrTag" label="消费方标签" width="180" />
-                <el-table-column prop="Elem" label="数据元素" width="180" />
-                <el-table-column prop="CltTag" label="服务方标签" width="180" />
-              </el-table>
-            </div>
-            <div v-for="(v,i) in resDataSource">
-              <el-divider content-position="left">响应 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</el-divider>
-              <el-table :data="v.Items" border style="width: 100%; display: flex; justify-content: center;">
-                <el-table-column prop="SvrTag" label="消费方标签" width="180" />
-                <el-table-column prop="Elem" label="数据元素" width="180" />
-                <el-table-column prop="CltTag" label="服务方标签" width="180" />
-              </el-table>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-main>
-      <el-footer><!-- Footer --></el-footer>
-    </el-container>
-  </div>
+  <lay-layout class="main">
+    <lay-header>
+    </lay-header>
+    <lay-body>
+      <lay-tab type="brief" tabPosition = "left" @change="tabChange">
+        <lay-tab-item v-for="item in dtaPorts" title="item" id="item">
+          <lay-line theme="green" content-position="center" v-if="dtaPort.length > 0">{{ dtaPort }}</lay-line>
+          <lay-button type="default" v-for="c in codes" @click="btnClick" style="border-width: 0;">{{ c }}</lay-button>
+          <lay-line content-position="center" v-if="code.length > 0">{{ code }}</lay-line>
+          <div v-for="(v,i) in reqDataSource">
+            <lay-line theme="green" margin="50px" contentPosition="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</lay-line>
+            <lay-table :default-toolbar="false" :columns="columns" :data-source="v.Items"></lay-table>
+          </div>
+          <div v-for="(v,i) in resDataSource">
+            <lay-line theme="green" margin="50px" contentPosition="left">响应 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</lay-line>
+            <lay-table :default-toolbar="false" :columns="columns" :data-source="v.Items"></lay-table>
+          </div>
+        </lay-tab-item>
+      </lay-tab>
+      <lay-space direction="vertical" fill>
+      </lay-space>
+    </lay-body>
+    <lay-footer></lay-footer>
+  </lay-layout>
 </template>
 
 <script lang="ts" setup>
 import { ref,onMounted } from 'vue';
-import type { TabsPaneContext } from 'element-plus';
 import axios from 'axios';
 
 const dtaPorts = ref([]);
@@ -46,6 +37,12 @@ const code = ref('');
 const reqDataSource = ref([]);
 const resDataSource = ref([]);
 
+const columns = [
+  {title:"消费方标签",width:"100px",key:"SvrTag"},
+  {title:"数据元素",width:"100px",key:"Elem"},
+  {title:"服务方标签",width:"100px",key:"CltTag"},
+];
+
 const getCodes = (dta) => {
   axios.get('http://28.4.199.2:8000/svcs/'+dta).then((response) => {
     codes.value = response.data;
@@ -55,17 +52,17 @@ const getCodes = (dta) => {
       });
 }
 
-const tabClick = (pane :TabsPaneContext, ev:Event)=>{
+const tabChange = (id :string)=>{
   dtaPort.value = ''
   dta.value = ''
   codes.value = []
   code.value = ''
   reqDataSource.value = []
   resDataSource.value = []
-  let dtaName = pane.props.label.split(":")[0].trim()
+  let dtaName = id.split(":")[0].trim()
   getCodes(dtaName)
   dta.value = dtaName
-  dtaPort.value = pane.props.label
+  dtaPort.value = id
 }
 
 const btnClick = (event)=>{
@@ -102,15 +99,14 @@ onMounted(async () => {
 });
 </script>
 <style>
-/* 默认样式 */
-.common-layout {
-  width: 100%; /* 组件宽度默认为100% */
+@media screen and (min-width: 768px) {
+  .main {
+    width: 750px;
+  }
 }
-
-/* 当屏幕宽度小于768px时应用的样式 */
-@media (max-width: 768px) {
-  .common-layout {
-    width: 90%; /* 在小屏幕上减少宽度 */
+@media screen and (min-width: 992px) {
+  .main {
+    width: 970px;
   }
 }
 </style>

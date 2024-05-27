@@ -4,17 +4,17 @@
     </lay-header>
     <lay-body>
       <lay-tab type="brief" tabPosition = "left" @change="tabChange">
-        <lay-tab-item v-for="item in dtaPorts" title="item" id="item">
+        <lay-tab-item v-for="dp in dtaPorts" :title="dp" :id="dp">
           <lay-line theme="green" content-position="center" v-if="dtaPort.length > 0">{{ dtaPort }}</lay-line>
           <span class="code" v-for="c in codes" @click="btnClick" style="cursor: pointer; margin: 5px;">{{ c }}</span>
           <lay-line content-position="center" v-if="code.length > 0">{{ code }}</lay-line>
           <div v-for="(v,i) in reqDataSource">
             <lay-line theme="green" margin="50px" contentPosition="left">请求 {{ i }}: {{ v.SDta }}.{{v.SSvc}}.{{v.SFmt}} -> {{v.DDta}}.{{v.DSvc}}.{{v.DFmt}}</lay-line>
             <!-- lay-table :default-toolbar="false" :columns="columns" :data-source="v.Items"></lay-table -->
-            <table v-for="(v,i) in reqDataSource">
+            <table>
               <thead><th>消费方标签</th><th>数据元素</th><th>服务方标签</th></thead>
               <tbody>
-              <tr v-for="tag in v.Items"><td>tag.SvrTag</td><td>tag.Elem</td><td>tag.CltTag</td></tr>
+              <tr v-for="it in v.Items"><td>{{it.SvrTag}}</td><td>{{it.Elem}}</td><td>{{it.CltTag}}</td></tr>
               </tbody>
             </table>
           </div>
